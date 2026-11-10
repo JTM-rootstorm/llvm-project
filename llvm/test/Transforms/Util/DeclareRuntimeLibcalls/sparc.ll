@@ -211,7 +211,7 @@
 ; SPARC32-NEXT: declare double @__muldf3(double, double)
 ; SPARC32-NEXT: declare i64 @__muldi3(i64, i64)
 ; SPARC32-NEXT: declare signext i16 @__mulhi3(i16 signext, i16 signext)
-; SPARC32-NEXT: declare i32 @__mulosi4(i32, i32, ptr)
+; SPARC32-NEXT: declare i32 @__mulosi4(i32, i32, ptr noalias nonnull writeonly align 4 dereferenceable(4)) [[ARGMEM_WRITE_ATTRS:#[0-9]+]]
 ; SPARC32-NEXT: declare signext i8 @__mulqi3(i8 signext, i8 signext)
 ; SPARC32-NEXT: declare float @__mulsf3(float, float)
 ; SPARC32-NEXT: declare fp128 @__multf3(fp128, fp128)
@@ -416,9 +416,9 @@
 ; SPARC32-NEXT: declare i32 @lroundf(float)
 ; SPARC32-NEXT: declare i32 @lroundl(fp128)
 ; SPARC32-NEXT: declare noalias noundef ptr @malloc(i32 noundef) [[MALLOC_ATTRS:#[0-9]+]]
-; SPARC32-NEXT: declare ptr @memcpy(ptr, ptr, i32)
-; SPARC32-NEXT: declare ptr @memmove(ptr, ptr, i32)
-; SPARC32-NEXT: declare ptr @memset(ptr, i32, i32)
+; SPARC32-NEXT: declare ptr @memcpy(ptr noalias returned writeonly, ptr noalias readonly captures(none), i32) [[ARGMEM_ATTRS:#[0-9]+]]
+; SPARC32-NEXT: declare ptr @memmove(ptr returned writeonly, ptr readonly captures(none), i32) [[ARGMEM_ATTRS]]
+; SPARC32-NEXT: declare ptr @memset(ptr returned writeonly, i32, i32) [[ARGMEM_WRITE_ATTRS]]
 ; SPARC32-NEXT: declare double @modf(double, ptr noalias nonnull writeonly align 8 dereferenceable(8))
 ; SPARC32-NEXT: declare float @modff(float, ptr noalias nonnull writeonly align 4 dereferenceable(4))
 ; SPARC32-NEXT: declare fp128 @modfl(fp128, ptr noalias nonnull writeonly align 8 dereferenceable(16))
@@ -479,9 +479,11 @@
 ; SPARC32-NEXT: declare double @trunc(double)
 ; SPARC32-NEXT: declare float @truncf(float)
 ; SPARC32-NEXT: declare fp128 @truncl(fp128)
-; SPARC32-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc") allocsize(0,1) "alloc-family"="malloc" }
-; SPARC32-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") "alloc-family"="malloc" }
-; SPARC32-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) "alloc-family"="malloc" }
+; SPARC32-NEXT: attributes [[ARGMEM_WRITE_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: write) }
+; SPARC32-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,zeroed") allocsize(0,1) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; SPARC32-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") memory(argmem: readwrite, inaccessiblemem: readwrite) "alloc-family"="malloc" }
+; SPARC32-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; SPARC32-NEXT: attributes [[ARGMEM_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
 ; SPARC32-NEXT: attributes [[SQRT_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(errnomem: write) }
 
 ; SPARC64: @__safestack_unsafe_stack_ptr = external thread_local(initialexec) global ptr
@@ -691,7 +693,7 @@
 ; SPARC64-NEXT: declare double @__muldf3(double, double)
 ; SPARC64-NEXT: declare i64 @__muldi3(i64, i64)
 ; SPARC64-NEXT: declare signext i16 @__mulhi3(i16 signext, i16 signext)
-; SPARC64-NEXT: declare signext i32 @__mulosi4(i32 signext, i32 signext, ptr)
+; SPARC64-NEXT: declare signext i32 @__mulosi4(i32 signext, i32 signext, ptr noalias nonnull writeonly align 4 dereferenceable(4)) [[ARGMEM_WRITE_ATTRS:#[0-9]+]]
 ; SPARC64-NEXT: declare signext i8 @__mulqi3(i8 signext, i8 signext)
 ; SPARC64-NEXT: declare float @__mulsf3(float, float)
 ; SPARC64-NEXT: declare signext i32 @__mulsi3(i32 signext, i32 signext)
@@ -900,9 +902,9 @@
 ; SPARC64-NEXT: declare i64 @lroundf(float)
 ; SPARC64-NEXT: declare i64 @lroundl(fp128)
 ; SPARC64-NEXT: declare noalias noundef ptr @malloc(i64 noundef) [[MALLOC_ATTRS:#[0-9]+]]
-; SPARC64-NEXT: declare ptr @memcpy(ptr, ptr, i64)
-; SPARC64-NEXT: declare ptr @memmove(ptr, ptr, i64)
-; SPARC64-NEXT: declare ptr @memset(ptr, i32 signext, i64)
+; SPARC64-NEXT: declare ptr @memcpy(ptr noalias returned writeonly, ptr noalias readonly captures(none), i64) [[ARGMEM_ATTRS:#[0-9]+]]
+; SPARC64-NEXT: declare ptr @memmove(ptr returned writeonly, ptr readonly captures(none), i64) [[ARGMEM_ATTRS]]
+; SPARC64-NEXT: declare ptr @memset(ptr returned writeonly, i32 signext, i64) [[ARGMEM_WRITE_ATTRS]]
 ; SPARC64-NEXT: declare double @modf(double, ptr noalias nonnull writeonly align 8 dereferenceable(8))
 ; SPARC64-NEXT: declare float @modff(float, ptr noalias nonnull writeonly align 4 dereferenceable(4))
 ; SPARC64-NEXT: declare fp128 @modfl(fp128, ptr noalias nonnull writeonly align 16 dereferenceable(16))
@@ -963,7 +965,9 @@
 ; SPARC64-NEXT: declare double @trunc(double)
 ; SPARC64-NEXT: declare float @truncf(float)
 ; SPARC64-NEXT: declare fp128 @truncl(fp128)
-; SPARC64-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc") allocsize(0,1) "alloc-family"="malloc" }
-; SPARC64-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") "alloc-family"="malloc" }
-; SPARC64-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) "alloc-family"="malloc" }
+; SPARC64-NEXT: attributes [[ARGMEM_WRITE_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: write) }
+; SPARC64-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,zeroed") allocsize(0,1) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; SPARC64-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") memory(argmem: readwrite, inaccessiblemem: readwrite) "alloc-family"="malloc" }
+; SPARC64-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; SPARC64-NEXT: attributes [[ARGMEM_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
 ; SPARC64-NEXT: attributes [[SQRT_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(errnomem: write) }

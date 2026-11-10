@@ -219,7 +219,7 @@
 ; MSVC-NEXT: declare <2 x i64> @__modti3(<2 x i64>, <2 x i64>)
 ; MSVC-NEXT: declare double @__muldf3(double, double)
 ; MSVC-NEXT: declare signext i16 @__mulhi3(i16 signext, i16 signext)
-; MSVC-NEXT: declare i32 @__mulosi4(i32, i32, ptr)
+; MSVC-NEXT: declare i32 @__mulosi4(i32, i32, ptr noalias nonnull writeonly align 4 dereferenceable(4)) [[ARGMEM_WRITE_ATTRS:#[0-9]+]]
 ; MSVC-NEXT: declare signext i8 @__mulqi3(i8 signext, i8 signext)
 ; MSVC-NEXT: declare float @__mulsf3(float, float)
 ; MSVC-NEXT: declare i32 @__mulsi3(i32, i32)
@@ -396,9 +396,9 @@
 ; MSVC-NEXT: declare i32 @lround(double)
 ; MSVC-NEXT: declare i32 @lroundf(float)
 ; MSVC-NEXT: declare noalias noundef ptr @malloc(i64 noundef) [[MALLOC_ATTRS:#[0-9]+]]
-; MSVC-NEXT: declare ptr @memcpy(ptr, ptr, i64)
-; MSVC-NEXT: declare ptr @memmove(ptr, ptr, i64)
-; MSVC-NEXT: declare ptr @memset(ptr, i32, i64)
+; MSVC-NEXT: declare ptr @memcpy(ptr noalias returned writeonly, ptr noalias readonly captures(none), i64) [[ARGMEM_ATTRS:#[0-9]+]]
+; MSVC-NEXT: declare ptr @memmove(ptr returned writeonly, ptr readonly captures(none), i64) [[ARGMEM_ATTRS]]
+; MSVC-NEXT: declare ptr @memset(ptr returned writeonly, i32, i64) [[ARGMEM_WRITE_ATTRS]]
 ; MSVC-NEXT: declare double @modf(double, ptr noalias nonnull writeonly align 8 dereferenceable(8))
 ; MSVC-NEXT: declare float @modff(float, ptr noalias nonnull writeonly align 4 dereferenceable(4))
 ; MSVC-NEXT: declare double @nan(ptr)
@@ -437,9 +437,11 @@
 ; MSVC-NEXT: declare float @tgammaf(float)
 ; MSVC-NEXT: declare double @trunc(double)
 ; MSVC-NEXT: declare float @truncf(float)
-; MSVC-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc") allocsize(0,1) "alloc-family"="malloc" }
-; MSVC-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") "alloc-family"="malloc" }
-; MSVC-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) "alloc-family"="malloc" }
+; MSVC-NEXT: attributes [[ARGMEM_WRITE_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: write) }
+; MSVC-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,zeroed") allocsize(0,1) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; MSVC-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") memory(argmem: readwrite, inaccessiblemem: readwrite) "alloc-family"="malloc" }
+; MSVC-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; MSVC-NEXT: attributes [[ARGMEM_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
 ; MSVC-NEXT: attributes [[SQRT_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(errnomem: write) }
 
 ; MINGW: @__safestack_unsafe_stack_ptr = external thread_local(initialexec) global ptr
@@ -665,7 +667,7 @@
 ; MINGW-NEXT: declare <2 x i64> @__modti3(<2 x i64>, <2 x i64>)
 ; MINGW-NEXT: declare double @__muldf3(double, double)
 ; MINGW-NEXT: declare signext i16 @__mulhi3(i16 signext, i16 signext)
-; MINGW-NEXT: declare i32 @__mulosi4(i32, i32, ptr)
+; MINGW-NEXT: declare i32 @__mulosi4(i32, i32, ptr noalias nonnull writeonly align 4 dereferenceable(4)) [[ARGMEM_WRITE_ATTRS:#[0-9]+]]
 ; MINGW-NEXT: declare signext i8 @__mulqi3(i8 signext, i8 signext)
 ; MINGW-NEXT: declare float @__mulsf3(float, float)
 ; MINGW-NEXT: declare i32 @__mulsi3(i32, i32)
@@ -908,9 +910,9 @@
 ; MINGW-NEXT: declare i32 @lroundf128(fp128)
 ; MINGW-NEXT: declare i32 @lroundl(x86_fp80)
 ; MINGW-NEXT: declare noalias noundef ptr @malloc(i64 noundef) [[MALLOC_ATTRS:#[0-9]+]]
-; MINGW-NEXT: declare ptr @memcpy(ptr, ptr, i64)
-; MINGW-NEXT: declare ptr @memmove(ptr, ptr, i64)
-; MINGW-NEXT: declare ptr @memset(ptr, i32, i64)
+; MINGW-NEXT: declare ptr @memcpy(ptr noalias returned writeonly, ptr noalias readonly captures(none), i64) [[ARGMEM_ATTRS:#[0-9]+]]
+; MINGW-NEXT: declare ptr @memmove(ptr returned writeonly, ptr readonly captures(none), i64) [[ARGMEM_ATTRS]]
+; MINGW-NEXT: declare ptr @memset(ptr returned writeonly, i32, i64) [[ARGMEM_WRITE_ATTRS]]
 ; MINGW-NEXT: declare double @modf(double, ptr noalias nonnull writeonly align 8 dereferenceable(8))
 ; MINGW-NEXT: declare float @modff(float, ptr noalias nonnull writeonly align 4 dereferenceable(4))
 ; MINGW-NEXT: declare fp128 @modff128(fp128, ptr noalias nonnull writeonly align 16 dereferenceable(16))
@@ -984,9 +986,11 @@
 ; MINGW-NEXT: declare float @truncf(float)
 ; MINGW-NEXT: declare fp128 @truncf128(fp128)
 ; MINGW-NEXT: declare x86_fp80 @truncl(x86_fp80)
-; MINGW-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc") allocsize(0,1) "alloc-family"="malloc" }
-; MINGW-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") "alloc-family"="malloc" }
-; MINGW-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) "alloc-family"="malloc" }
+; MINGW-NEXT: attributes [[ARGMEM_WRITE_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: write) }
+; MINGW-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,zeroed") allocsize(0,1) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; MINGW-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") memory(argmem: readwrite, inaccessiblemem: readwrite) "alloc-family"="malloc" }
+; MINGW-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; MINGW-NEXT: attributes [[ARGMEM_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
 ; MINGW-NEXT: attributes [[SQRT_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(errnomem: write) }
 
 ; CYGWIN: @__safestack_unsafe_stack_ptr = external thread_local(initialexec) global ptr
@@ -1206,7 +1210,7 @@
 ; CYGWIN-NEXT: declare <2 x i64> @__modti3(<2 x i64>, <2 x i64>)
 ; CYGWIN-NEXT: declare double @__muldf3(double, double)
 ; CYGWIN-NEXT: declare signext i16 @__mulhi3(i16 signext, i16 signext)
-; CYGWIN-NEXT: declare i32 @__mulosi4(i32, i32, ptr)
+; CYGWIN-NEXT: declare i32 @__mulosi4(i32, i32, ptr noalias nonnull writeonly align 4 dereferenceable(4)) [[ARGMEM_WRITE_ATTRS:#[0-9]+]]
 ; CYGWIN-NEXT: declare signext i8 @__mulqi3(i8 signext, i8 signext)
 ; CYGWIN-NEXT: declare float @__mulsf3(float, float)
 ; CYGWIN-NEXT: declare i32 @__mulsi3(i32, i32)
@@ -1421,9 +1425,9 @@
 ; CYGWIN-NEXT: declare i64 @lroundf(float)
 ; CYGWIN-NEXT: declare i64 @lroundl(x86_fp80)
 ; CYGWIN-NEXT: declare noalias noundef ptr @malloc(i64 noundef) [[MALLOC_ATTRS:#[0-9]+]]
-; CYGWIN-NEXT: declare ptr @memcpy(ptr, ptr, i64)
-; CYGWIN-NEXT: declare ptr @memmove(ptr, ptr, i64)
-; CYGWIN-NEXT: declare ptr @memset(ptr, i32, i64)
+; CYGWIN-NEXT: declare ptr @memcpy(ptr noalias returned writeonly, ptr noalias readonly captures(none), i64) [[ARGMEM_ATTRS:#[0-9]+]]
+; CYGWIN-NEXT: declare ptr @memmove(ptr returned writeonly, ptr readonly captures(none), i64) [[ARGMEM_ATTRS]]
+; CYGWIN-NEXT: declare ptr @memset(ptr returned writeonly, i32, i64) [[ARGMEM_WRITE_ATTRS]]
 ; CYGWIN-NEXT: declare double @modf(double, ptr noalias nonnull writeonly align 8 dereferenceable(8))
 ; CYGWIN-NEXT: declare float @modff(float, ptr noalias nonnull writeonly align 4 dereferenceable(4))
 ; CYGWIN-NEXT: declare x86_fp80 @modfl(x86_fp80, ptr noalias nonnull writeonly align 16 dereferenceable(10))
@@ -1481,9 +1485,11 @@
 ; CYGWIN-NEXT: declare double @trunc(double)
 ; CYGWIN-NEXT: declare float @truncf(float)
 ; CYGWIN-NEXT: declare x86_fp80 @truncl(x86_fp80)
-; CYGWIN-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc") allocsize(0,1) "alloc-family"="malloc" }
-; CYGWIN-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") "alloc-family"="malloc" }
-; CYGWIN-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) "alloc-family"="malloc" }
+; CYGWIN-NEXT: attributes [[ARGMEM_WRITE_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: write) }
+; CYGWIN-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,zeroed") allocsize(0,1) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; CYGWIN-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") memory(argmem: readwrite, inaccessiblemem: readwrite) "alloc-family"="malloc" }
+; CYGWIN-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; CYGWIN-NEXT: attributes [[ARGMEM_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
 ; CYGWIN-NEXT: attributes [[SQRT_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(errnomem: write) }
 
 ; UEFI: @__safestack_unsafe_stack_ptr = external thread_local(initialexec) global ptr
@@ -1698,7 +1704,7 @@
 ; UEFI-NEXT: declare <2 x i64> @__modti3(<2 x i64>, <2 x i64>)
 ; UEFI-NEXT: declare double @__muldf3(double, double)
 ; UEFI-NEXT: declare signext i16 @__mulhi3(i16 signext, i16 signext)
-; UEFI-NEXT: declare i32 @__mulosi4(i32, i32, ptr)
+; UEFI-NEXT: declare i32 @__mulosi4(i32, i32, ptr noalias nonnull writeonly align 4 dereferenceable(4)) [[ARGMEM_WRITE_ATTRS:#[0-9]+]]
 ; UEFI-NEXT: declare signext i8 @__mulqi3(i8 signext, i8 signext)
 ; UEFI-NEXT: declare float @__mulsf3(float, float)
 ; UEFI-NEXT: declare i32 @__mulsi3(i32, i32)
@@ -1880,9 +1886,9 @@
 ; UEFI-NEXT: declare i32 @lround(double)
 ; UEFI-NEXT: declare i32 @lroundf(float)
 ; UEFI-NEXT: declare noalias noundef ptr @malloc(i64 noundef) [[MALLOC_ATTRS:#[0-9]+]]
-; UEFI-NEXT: declare ptr @memcpy(ptr, ptr, i64)
-; UEFI-NEXT: declare ptr @memmove(ptr, ptr, i64)
-; UEFI-NEXT: declare ptr @memset(ptr, i32, i64)
+; UEFI-NEXT: declare ptr @memcpy(ptr noalias returned writeonly, ptr noalias readonly captures(none), i64) [[ARGMEM_ATTRS:#[0-9]+]]
+; UEFI-NEXT: declare ptr @memmove(ptr returned writeonly, ptr readonly captures(none), i64) [[ARGMEM_ATTRS]]
+; UEFI-NEXT: declare ptr @memset(ptr returned writeonly, i32, i64) [[ARGMEM_WRITE_ATTRS]]
 ; UEFI-NEXT: declare double @modf(double, ptr noalias nonnull writeonly align 8 dereferenceable(8))
 ; UEFI-NEXT: declare float @modff(float, ptr noalias nonnull writeonly align 4 dereferenceable(4))
 ; UEFI-NEXT: declare double @nan(ptr)
@@ -1921,7 +1927,9 @@
 ; UEFI-NEXT: declare float @tgammaf(float)
 ; UEFI-NEXT: declare double @trunc(double)
 ; UEFI-NEXT: declare float @truncf(float)
-; UEFI-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc") allocsize(0,1) "alloc-family"="malloc" }
-; UEFI-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") "alloc-family"="malloc" }
-; UEFI-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) "alloc-family"="malloc" }
+; UEFI-NEXT: attributes [[ARGMEM_WRITE_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: write) }
+; UEFI-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,zeroed") allocsize(0,1) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; UEFI-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") memory(argmem: readwrite, inaccessiblemem: readwrite) "alloc-family"="malloc" }
+; UEFI-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; UEFI-NEXT: attributes [[ARGMEM_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
 ; UEFI-NEXT: attributes [[SQRT_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(errnomem: write) }

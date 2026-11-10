@@ -228,7 +228,7 @@
 ; LINUX-NEXT: declare i128 @__modti3(i128, i128)
 ; LINUX-NEXT: declare double @__muldf3(double, double)
 ; LINUX-NEXT: declare signext i16 @__mulhi3(i16 signext, i16 signext)
-; LINUX-NEXT: declare i32 @__mulosi4(i32, i32, ptr)
+; LINUX-NEXT: declare i32 @__mulosi4(i32, i32, ptr noalias nonnull writeonly align 4 dereferenceable(4)) [[ARGMEM_WRITE_ATTRS:#[0-9]+]]
 ; LINUX-NEXT: declare signext i8 @__mulqi3(i8 signext, i8 signext)
 ; LINUX-NEXT: declare float @__mulsf3(float, float)
 ; LINUX-NEXT: declare i32 @__mulsi3(i32, i32)
@@ -474,9 +474,9 @@
 ; LINUX-NEXT: declare i64 @lroundf128(fp128)
 ; LINUX-NEXT: declare i64 @lroundl(x86_fp80)
 ; LINUX-NEXT: declare noalias noundef ptr @malloc(i64 noundef) [[MALLOC_ATTRS:#[0-9]+]]
-; LINUX-NEXT: declare ptr @memcpy(ptr, ptr, i64)
-; LINUX-NEXT: declare ptr @memmove(ptr, ptr, i64)
-; LINUX-NEXT: declare ptr @memset(ptr, i32, i64)
+; LINUX-NEXT: declare ptr @memcpy(ptr noalias returned writeonly, ptr noalias readonly captures(none), i64) [[ARGMEM_ATTRS:#[0-9]+]]
+; LINUX-NEXT: declare ptr @memmove(ptr returned writeonly, ptr readonly captures(none), i64) [[ARGMEM_ATTRS]]
+; LINUX-NEXT: declare ptr @memset(ptr returned writeonly, i32, i64) [[ARGMEM_WRITE_ATTRS]]
 ; LINUX-NEXT: declare double @modf(double, ptr noalias nonnull writeonly align 8 dereferenceable(8))
 ; LINUX-NEXT: declare float @modff(float, ptr noalias nonnull writeonly align 4 dereferenceable(4))
 ; LINUX-NEXT: declare fp128 @modff128(fp128, ptr noalias nonnull writeonly align 16 dereferenceable(16))
@@ -550,9 +550,11 @@
 ; LINUX-NEXT: declare float @truncf(float)
 ; LINUX-NEXT: declare fp128 @truncf128(fp128)
 ; LINUX-NEXT: declare x86_fp80 @truncl(x86_fp80)
-; LINUX-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc") allocsize(0,1) "alloc-family"="malloc" }
-; LINUX-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") "alloc-family"="malloc" }
-; LINUX-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) "alloc-family"="malloc" }
+; LINUX-NEXT: attributes [[ARGMEM_WRITE_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: write) }
+; LINUX-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,zeroed") allocsize(0,1) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; LINUX-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") memory(argmem: readwrite, inaccessiblemem: readwrite) "alloc-family"="malloc" }
+; LINUX-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; LINUX-NEXT: attributes [[ARGMEM_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
 ; LINUX-NEXT: attributes [[SQRT_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(errnomem: write) }
 
 ; FREEBSD: @__safestack_unsafe_stack_ptr = external thread_local(initialexec) global ptr
@@ -771,7 +773,7 @@
 ; FREEBSD-NEXT: declare i128 @__modti3(i128, i128)
 ; FREEBSD-NEXT: declare double @__muldf3(double, double)
 ; FREEBSD-NEXT: declare signext i16 @__mulhi3(i16 signext, i16 signext)
-; FREEBSD-NEXT: declare i32 @__mulosi4(i32, i32, ptr)
+; FREEBSD-NEXT: declare i32 @__mulosi4(i32, i32, ptr noalias nonnull writeonly align 4 dereferenceable(4)) [[ARGMEM_WRITE_ATTRS:#[0-9]+]]
 ; FREEBSD-NEXT: declare signext i8 @__mulqi3(i8 signext, i8 signext)
 ; FREEBSD-NEXT: declare float @__mulsf3(float, float)
 ; FREEBSD-NEXT: declare i32 @__mulsi3(i32, i32)
@@ -986,9 +988,9 @@
 ; FREEBSD-NEXT: declare i64 @lroundf(float)
 ; FREEBSD-NEXT: declare i64 @lroundl(x86_fp80)
 ; FREEBSD-NEXT: declare noalias noundef ptr @malloc(i64 noundef) [[MALLOC_ATTRS:#[0-9]+]]
-; FREEBSD-NEXT: declare ptr @memcpy(ptr, ptr, i64)
-; FREEBSD-NEXT: declare ptr @memmove(ptr, ptr, i64)
-; FREEBSD-NEXT: declare ptr @memset(ptr, i32, i64)
+; FREEBSD-NEXT: declare ptr @memcpy(ptr noalias returned writeonly, ptr noalias readonly captures(none), i64) [[ARGMEM_ATTRS:#[0-9]+]]
+; FREEBSD-NEXT: declare ptr @memmove(ptr returned writeonly, ptr readonly captures(none), i64) [[ARGMEM_ATTRS]]
+; FREEBSD-NEXT: declare ptr @memset(ptr returned writeonly, i32, i64) [[ARGMEM_WRITE_ATTRS]]
 ; FREEBSD-NEXT: declare double @modf(double, ptr noalias nonnull writeonly align 8 dereferenceable(8))
 ; FREEBSD-NEXT: declare float @modff(float, ptr noalias nonnull writeonly align 4 dereferenceable(4))
 ; FREEBSD-NEXT: declare x86_fp80 @modfl(x86_fp80, ptr noalias nonnull writeonly align 16 dereferenceable(10))
@@ -1046,9 +1048,11 @@
 ; FREEBSD-NEXT: declare double @trunc(double)
 ; FREEBSD-NEXT: declare float @truncf(float)
 ; FREEBSD-NEXT: declare x86_fp80 @truncl(x86_fp80)
-; FREEBSD-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc") allocsize(0,1) "alloc-family"="malloc" }
-; FREEBSD-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") "alloc-family"="malloc" }
-; FREEBSD-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) "alloc-family"="malloc" }
+; FREEBSD-NEXT: attributes [[ARGMEM_WRITE_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: write) }
+; FREEBSD-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,zeroed") allocsize(0,1) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; FREEBSD-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") memory(argmem: readwrite, inaccessiblemem: readwrite) "alloc-family"="malloc" }
+; FREEBSD-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; FREEBSD-NEXT: attributes [[ARGMEM_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
 ; FREEBSD-NEXT: attributes [[SQRT_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(errnomem: write) }
 
 ; OPENBSD: @__guard_local = external global ptr
@@ -1267,7 +1271,7 @@
 ; OPENBSD-NEXT: declare i128 @__modti3(i128, i128)
 ; OPENBSD-NEXT: declare double @__muldf3(double, double)
 ; OPENBSD-NEXT: declare signext i16 @__mulhi3(i16 signext, i16 signext)
-; OPENBSD-NEXT: declare i32 @__mulosi4(i32, i32, ptr)
+; OPENBSD-NEXT: declare i32 @__mulosi4(i32, i32, ptr noalias nonnull writeonly align 4 dereferenceable(4)) [[ARGMEM_WRITE_ATTRS:#[0-9]+]]
 ; OPENBSD-NEXT: declare signext i8 @__mulqi3(i8 signext, i8 signext)
 ; OPENBSD-NEXT: declare float @__mulsf3(float, float)
 ; OPENBSD-NEXT: declare i32 @__mulsi3(i32, i32)
@@ -1482,9 +1486,9 @@
 ; OPENBSD-NEXT: declare i64 @lroundf(float)
 ; OPENBSD-NEXT: declare i64 @lroundl(x86_fp80)
 ; OPENBSD-NEXT: declare noalias noundef ptr @malloc(i64 noundef) [[MALLOC_ATTRS:#[0-9]+]]
-; OPENBSD-NEXT: declare ptr @memcpy(ptr, ptr, i64)
-; OPENBSD-NEXT: declare ptr @memmove(ptr, ptr, i64)
-; OPENBSD-NEXT: declare ptr @memset(ptr, i32, i64)
+; OPENBSD-NEXT: declare ptr @memcpy(ptr noalias returned writeonly, ptr noalias readonly captures(none), i64) [[ARGMEM_ATTRS:#[0-9]+]]
+; OPENBSD-NEXT: declare ptr @memmove(ptr returned writeonly, ptr readonly captures(none), i64) [[ARGMEM_ATTRS]]
+; OPENBSD-NEXT: declare ptr @memset(ptr returned writeonly, i32, i64) [[ARGMEM_WRITE_ATTRS]]
 ; OPENBSD-NEXT: declare double @modf(double, ptr noalias nonnull writeonly align 8 dereferenceable(8))
 ; OPENBSD-NEXT: declare float @modff(float, ptr noalias nonnull writeonly align 4 dereferenceable(4))
 ; OPENBSD-NEXT: declare x86_fp80 @modfl(x86_fp80, ptr noalias nonnull writeonly align 16 dereferenceable(10))
@@ -1542,7 +1546,9 @@
 ; OPENBSD-NEXT: declare double @trunc(double)
 ; OPENBSD-NEXT: declare float @truncf(float)
 ; OPENBSD-NEXT: declare x86_fp80 @truncl(x86_fp80)
-; OPENBSD-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc") allocsize(0,1) "alloc-family"="malloc" }
-; OPENBSD-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") "alloc-family"="malloc" }
-; OPENBSD-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) "alloc-family"="malloc" }
+; OPENBSD-NEXT: attributes [[ARGMEM_WRITE_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: write) }
+; OPENBSD-NEXT: attributes [[CALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,zeroed") allocsize(0,1) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; OPENBSD-NEXT: attributes [[FREE_ATTRS]] = { nounwind willreturn allockind("free") memory(argmem: readwrite, inaccessiblemem: readwrite) "alloc-family"="malloc" }
+; OPENBSD-NEXT: attributes [[MALLOC_ATTRS]] = { nofree nounwind willreturn allockind("alloc,uninitialized") allocsize(0) memory(inaccessiblemem: readwrite, errnomem: readwrite) "alloc-family"="malloc" }
+; OPENBSD-NEXT: attributes [[ARGMEM_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
 ; OPENBSD-NEXT: attributes [[SQRT_ATTRS]] = { nocallback nofree nosync nounwind willreturn memory(errnomem: write) }

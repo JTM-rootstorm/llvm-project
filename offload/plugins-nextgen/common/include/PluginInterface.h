@@ -918,7 +918,7 @@ struct GenericDeviceTy : public DeviceAllocatorTy {
   /// Record the deallocation of \p Kind memory at \p DevicePtr, and report it
   /// if the allocation it refers to was never made, is already deallocated, or
   /// was of another kind. Does nothing if allocation traces are not tracked.
-  Error recordDeallocation(void *DevicePtr, TargetAllocTy Kind);
+  void recordDeallocation(void *DevicePtr, TargetAllocTy Kind);
 
   /// Pin or register host memory to optimize transfers and return the device
   /// accessible pointer that devices should use for memory transfers involving

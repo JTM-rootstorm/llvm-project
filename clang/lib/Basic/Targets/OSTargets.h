@@ -913,6 +913,25 @@ public:
   }
 };
 
+// Wyrmroot target
+template <typename Target>
+class LLVM_LIBRARY_VISIBILITY WyrmrootTargetInfo : public OSTargetInfo<Target> {
+protected:
+  void getOSDefines(const LangOptions &Opts, const llvm::Triple &Triple,
+                    MacroBuilder &Builder) const override {
+    // Wyrmroot is not a Unix: its native interface is capability-based and
+    // POSIX is provided by a userspace layer, so neither `unix` nor
+    // `__unix__` is defined (the Rust target does not claim cfg(unix)).
+    Builder.defineMacro("__wyrmroot__");
+    if (Opts.POSIXThreads)
+      Builder.defineMacro("_REENTRANT");
+  }
+
+public:
+  WyrmrootTargetInfo(const llvm::Triple &Triple, const TargetOptions &Opts)
+      : OSTargetInfo<Target>(Triple, Opts) {}
+};
+
 // WebAssembly target
 template <typename Target>
 class LLVM_LIBRARY_VISIBILITY WebAssemblyOSTargetInfo

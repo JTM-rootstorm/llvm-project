@@ -3606,6 +3606,15 @@ static void RenderSCPOptions(const ToolChain &TC, const ArgList &Args,
                              ArgStringList &CmdArgs) {
   const llvm::Triple &EffectiveTriple = TC.getEffectiveTriple();
 
+  // Wyrmroot probes the stack inline by default, matching the Rust
+  // x86_64-unknown-wyrmroot target's inline stack probes.
+  if (EffectiveTriple.isOSWyrmroot()) {
+    if (Args.hasFlag(options::OPT_fstack_clash_protection,
+                     options::OPT_fno_stack_clash_protection, true))
+      CmdArgs.push_back("-fstack-clash-protection");
+    return;
+  }
+
   if (!EffectiveTriple.isOSFreeBSD() && !EffectiveTriple.isOSLinux() &&
       !EffectiveTriple.isOSFuchsia())
     return;

@@ -660,6 +660,9 @@ std::unique_ptr<TargetInfo> AllocateTarget(const llvm::Triple &Triple,
     case llvm::Triple::Managarm:
       return std::make_unique<ManagarmTargetInfo<X86_64TargetInfo>>(Triple,
                                                                     Opts);
+    case llvm::Triple::Wyrmroot:
+      return std::make_unique<WyrmrootTargetInfo<X86_64TargetInfo>>(Triple,
+                                                                    Opts);
     default:
       return std::make_unique<X86_64TargetInfo>(Triple, Opts);
     }

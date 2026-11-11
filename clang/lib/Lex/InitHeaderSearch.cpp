@@ -234,6 +234,7 @@ bool InitHeaderSearch::ShouldAddDefaultIncludePaths(
   case llvm::Triple::WASIp2:
   case llvm::Triple::WASIp3:
   case llvm::Triple::Win32:
+  case llvm::Triple::Wyrmroot:
   case llvm::Triple::ZOS:
     return false;
 

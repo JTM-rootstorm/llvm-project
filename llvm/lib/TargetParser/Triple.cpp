@@ -333,6 +333,8 @@ StringRef Triple::getOSTypeName(OSType Kind) {
   case WASIp3:
     return "wasip3";
   case WatchOS: return "watchos";
+  case Wyrmroot:
+    return "wyrmroot";
   case Win32: return "windows";
   case ZOS: return "zos";
   case ShaderModel: return "shadermodel";
@@ -754,6 +756,7 @@ static Triple::OSType parseOS(StringRef OSName) {
       .StartsWith("serenity", Triple::Serenity)
       .StartsWith("vulkan", Triple::Vulkan)
       .StartsWith("cheriotrtos", Triple::CheriotRTOS)
+      .StartsWith("wyrmroot", Triple::Wyrmroot)
       .Default(Triple::UnknownOS);
 }
 

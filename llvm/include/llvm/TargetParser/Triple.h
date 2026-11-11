@@ -252,7 +252,8 @@ public:
     Serenity,
     Vulkan, // Vulkan SPIR-V
     CheriotRTOS,
-    LastOSType = CheriotRTOS
+    Wyrmroot,
+    LastOSType = Wyrmroot
   };
   enum EnvironmentType {
     UnknownEnvironment,
@@ -891,6 +892,9 @@ public:
   bool isVulkanOS() const { return getOS() == Triple::Vulkan; }
 
   bool isOSManagarm() const { return getOS() == Triple::Managarm; }
+
+  /// Tests whether the OS is Wyrmroot.
+  bool isOSWyrmroot() const { return getOS() == Triple::Wyrmroot; }
 
   bool isShaderStageEnvironment() const {
     EnvironmentType Env = getEnvironment();

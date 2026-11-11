@@ -1457,6 +1457,15 @@ TEST(TripleTest, ParsedIDs) {
   EXPECT_EQ(Triple::Managarm, T.getOS());
   EXPECT_EQ(Triple::Mlibc, T.getEnvironment());
 
+  T = Triple("x86_64-unknown-wyrmroot");
+  EXPECT_EQ(Triple::x86_64, T.getArch());
+  EXPECT_EQ(Triple::UnknownVendor, T.getVendor());
+  EXPECT_EQ(Triple::Wyrmroot, T.getOS());
+  EXPECT_EQ(Triple::UnknownEnvironment, T.getEnvironment());
+  EXPECT_TRUE(T.isOSWyrmroot());
+  EXPECT_TRUE(T.isOSBinFormatELF());
+  EXPECT_EQ("x86_64-unknown-wyrmroot", T.normalize());
+
   T = Triple("huh");
   EXPECT_EQ(Triple::UnknownArch, T.getArch());
 

@@ -14,7 +14,8 @@
 // CHECK-NOT: "-pic-is-pie"
 // CHECK-SAME: "-mrelocation-model" "static"
 // CHECK-SAME: "-funwind-tables=2"
-// CHECK-SAME: "-target-feature" "-x87" "-target-feature" "-fxsr" "-target-feature" "-mmx" "-target-feature" "-sse" "-target-feature" "+soft-float"
+// The SysV x86-64 psABI: the plain x86-64 feature set, nothing turned off.
+// CHECK-NOT: "-target-feature"
 // CHECK-SAME: "-resource-dir" "[[RESOURCE_DIR:[^"]+]]"
 // CHECK-SAME: "-isysroot" "[[SYSROOT:[^"]+]]"
 // CHECK-CXX-SAME: "-internal-isystem" "[[SYSROOT]]{{/|\\\\}}include{{/|\\\\}}c++{{/|\\\\}}v1"
@@ -89,9 +90,9 @@
 
 // Explicit flags override the defaults.
 // RUN: %clang -### %s --target=x86_64-unknown-wyrmroot -fno-stack-clash-protection \
-// RUN:     -msse2 -c 2>&1 | FileCheck --check-prefix=OVERRIDE %s
-// OVERRIDE: "-target-feature" "-sse" "-target-feature" "+soft-float"
-// OVERRIDE-SAME: "-target-feature" "+sse2"
+// RUN:     -msse4.2 -c 2>&1 | FileCheck --check-prefix=OVERRIDE %s
+// OVERRIDE-NOT: "+soft-float"
+// OVERRIDE: "-target-feature" "+sse4.2"
 // OVERRIDE-NOT: "-fstack-clash-protection"
 
 // Without a sysroot no libc include directory is added at all.

@@ -159,18 +159,6 @@ void x86::getX86TargetFeatures(const Driver &D, const llvm::Triple &Triple,
       Features.push_back("+ssse3");
   }
 
-  // Wyrmroot userspace runs with x87, MMX, SSE and AVX unavailable (Deepwyrm
-  // keeps CR0.TS set), so floating point is soft-float with no FP/SIMD
-  // registers. This matches the Rust x86_64-unknown-wyrmroot target's
-  // features and soft-float ABI. Explicit -m flags below may override it.
-  if (Triple.isOSWyrmroot()) {
-    Features.push_back("-x87");
-    Features.push_back("-fxsr");
-    Features.push_back("-mmx");
-    Features.push_back("-sse");
-    Features.push_back("+soft-float");
-  }
-
   // Translate the high level `-mretpoline` flag to the specific target feature
   // flags. We also detect if the user asked for retpoline external thunks but
   // failed to ask for retpolines themselves (through any of the different
